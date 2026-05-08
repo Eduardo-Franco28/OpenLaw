@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenLaw — Glossário Técnico</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+<!-- ─── NAV ─── -->
+<nav>
+  <a href="#" class="logo">
+    <div>
+      <div class="logo-text">op<span>★</span>nLaw</div>
+      <div class="logo-sub">Agency</div>
+    </div>
+  </a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#">Início</a></li>
+    <li><a href="#">Projetos</a></li>
+    <li><a href="#" class="active">Glossário</a></li>
+    <li><a href="#">Sobre</a></li>
+    <li><a href="#" class="nav-cta">Contatar</a></li>
+  </ul>
+  <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section class="hero">
+  <p class="hero-eyebrow">✦ Glossário Técnico</p>
+  <h1 class="hero-title">Conceitos que <em>movem</em><br>o digital</h1>
+  <div class="ai-greeting" id="aiGreeting"></div>
+  <p class="hero-subtitle">Definições claras de tecnologia, design e marketing digital. Pesquise livremente ou converse com nossa IA.</p>
+
+  <!-- Search -->
+  <div class="search-wrapper">
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input type="text" class="search-input" id="searchInput" placeholder="Pesquisar um termo...">
+      <div class="mode-toggle">
+        <button class="mode-btn active" id="btnSearch" onclick="setMode('search')">
+          🔎 Pesquisa
+        </button>
+        <button class="mode-btn" id="btnAI" onclick="setMode('ai')">
+          ✦ Modo IA
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── AI PANEL ─── -->
+<div class="ai-panel">
+  <div class="ai-chat-box">
+    <div class="ai-messages" id="aiMessages">
+      <div class="ai-msg">
+        <div class="ai-avatar bot">✦</div>
+        <div class="ai-bubble">Olá! Sou a IA da Spark Agency. Pergunte qualquer coisa sobre tecnologia, design ou marketing digital — explico em detalhes.</div>
+      </div>
+    </div>
+    <div class="ai-input-row">
+      <input type="text" class="ai-text-input" id="aiInput" placeholder="Pergunte alguma coisa..." onkeydown="if(event.key==='Enter')sendAI()">
+      <button class="ai-send-btn" onclick="sendAI()">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── FILTERS ─── -->
+<div class="filter-row" id="filterRow">
+  <span class="filter-label">Filtrar:</span>
+  <button class="filter-tag active" onclick="filterCat(this,'all')">Todos</button>
+  <button class="filter-tag" onclick="filterCat(this,'design')">Design</button>
+  <button class="filter-tag" onclick="filterCat(this,'dev')">Dev</button>
+  <button class="filter-tag" onclick="filterCat(this,'marketing')">Marketing</button>
+  <button class="filter-tag" onclick="filterCat(this,'ux')">UX/UI</button>
+  <button class="filter-tag" onclick="filterCat(this,'ia')">Inteligência Artificial</button>
+</div>
+
+<!-- ─── GLOSSARY ─── -->
+<div class="glossary-section" id="glossarySection">
+  <div class="no-results" id="noResults">Nenhum termo encontrado. 🔍</div>
+</div>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <p class="footer-copy">© 2025 Spark Agency. Todos os direitos reservados.</p>
+  <div class="footer-links">
+    <a href="#">Termos</a>
+    <a href="#">Privacidade</a>
+    <a href="#">Contato</a>
+  </div>
+</footer>
+
+<script>
+// ─── DATA ───
+const glossary = [
+  { term: "API", cat: "dev", def: "Interface de Programação de Aplicações — contrato que permite comunicação entre sistemas de software distintos via requisições padronizadas." },
+  { term: "Agile", cat: "dev", def: "Metodologia de desenvolvimento iterativo que valoriza entregas incrementais, colaboração e adaptação rápida a mudanças." },
+  { term: "A/B Testing", cat: "marketing", def: "Experimento controlado que compara duas variações de um elemento (página, e-mail, CTA) para determinar qual performa melhor." },
+  { term: "Algoritmo", cat: "ia", def: "Sequência de instruções lógicas que resolve um problema específico. Base de motores de busca, feeds sociais e sistemas de IA." },
+  { term: "Brand Identity", cat: "design", def: "Conjunto de elementos visuais e verbais — logo, paleta, tipografia, tom de voz — que definem a personalidade de uma marca." },
+  { term: "Backlog", cat: "dev", def: "Lista priorizada de funcionalidades, melhorias e correções que aguardam desenvolvimento em metodologias ágeis." },
+  { term: "Benchmark", cat: "marketing", def: "Processo de comparar métricas próprias com padrões do mercado ou concorrentes para identificar lacunas e oportunidades." },
+  { term: "Big Data", cat: "ia", def: "Conjuntos de dados volumosos, variados e de alta velocidade que excedem a capacidade de ferramentas convencionais de processamento." },
+  { term: "CRO", cat: "marketing", def: "Otimização de Taxa de Conversão — processo sistemático de aumentar o percentual de visitantes que completam uma ação desejada." },
+  { term: "CSS Grid", cat: "dev", def: "Sistema de layout bidimensional do CSS que permite criar designs complexos com linhas e colunas de forma declarativa e flexível." },
+  { term: "Chatbot", cat: "ia", def: "Software que simula conversas humanas via texto ou voz, podendo ser baseado em regras ou em modelos de linguagem avançados." },
+  { term: "CMS", cat: "dev", def: "Sistema de Gerenciamento de Conteúdo — plataforma que permite criar, editar e publicar conteúdo digital sem código manual." },
+  { term: "Design System", cat: "design", def: "Coleção de componentes reutilizáveis, diretrizes e padrões que garantem consistência visual em produtos digitais de qualquer escala." },
+  { term: "Deploy", cat: "dev", def: "Processo de lançar uma versão de software em um ambiente de produção, tornando-a disponível para os usuários finais." },
+  { term: "Data-Driven", cat: "marketing", def: "Abordagem que prioriza decisões baseadas em dados quantitativos e análises, reduzindo subjetividade e vieses cognitivos." },
+  { term: "Deep Learning", cat: "ia", def: "Subcampo do machine learning que usa redes neurais com múltiplas camadas para aprender padrões complexos em grandes volumes de dados." },
+  { term: "Experiência do Usuário", cat: "ux", def: "Soma de todas as percepções, emoções e comportamentos de uma pessoa ao interagir com um produto, serviço ou sistema digital." },
+  { term: "Elastic Search", cat: "dev", def: "Motor de busca e análise distribuído, capaz de indexar grandes volumes de dados e retornar resultados em tempo quase real." },
+  { term: "Funil de Vendas", cat: "marketing", def: "Modelo que mapeia a jornada do cliente desde a descoberta da marca até a conversão final, dividido em topo, meio e fundo." },
+  { term: "Flexbox", cat: "dev", def: "Módulo de layout CSS unidimensional que distribui espaço entre itens em um contêiner, facilitando alinhamento e responsividade." },
+  { term: "Framework", cat: "dev", def: "Estrutura de código pré-construída que fornece uma base para desenvolver aplicações, impondo convenções e acelerando o desenvolvimento." },
+  { term: "Git", cat: "dev", def: "Sistema de controle de versão distribuído que rastreia alterações em código-fonte, permitindo colaboração e histórico completo de mudanças." },
+  { term: "Growth Hacking", cat: "marketing", def: "Estratégia focada em crescimento acelerado usando experimentação rápida, dados e criatividade para encontrar canais de aquisição escaláveis." },
+  { term: "Heurística de Nielsen", cat: "ux", def: "Dez princípios gerais de design de interface propostos por Jakob Nielsen, usados como base para avaliação de usabilidade." },
+  { term: "HTML5", cat: "dev", def: "Quinta versão do HyperText Markup Language — linguagem de marcação que estrutura o conteúdo da web com semântica aprimorada." },
+  { term: "Inteligência Artificial", cat: "ia", def: "Campo da ciência da computação dedicado a criar sistemas capazes de realizar tarefas que normalmente exigiriam inteligência humana." },
+  { term: "Inbound Marketing", cat: "marketing", def: "Estratégia que atrai clientes potenciais por meio de conteúdo relevante e experiências personalizadas, em vez de interrupções diretas." },
+  { term: "Jornada do Usuário", cat: "ux", def: "Representação visual de todos os passos que um usuário percorre ao interagir com um produto, incluindo emoções e pontos de atrito." },
+  { term: "JavaScript", cat: "dev", def: "Linguagem de programação dinâmica e interpretada, essencial para interatividade na web e amplamente usada no frontend e backend." },
+  { term: "KPI", cat: "marketing", def: "Indicador-Chave de Performance — métrica quantificável que reflete o sucesso de uma organização em atingir seus objetivos estratégicos." },
+  { term: "Kanban", cat: "dev", def: "Método visual de gestão de fluxo de trabalho que usa cartões e colunas para representar tarefas em diferentes estágios de progresso." },
+  { term: "LLM", cat: "ia", def: "Large Language Model — modelo de IA treinado em enormes volumes de texto para compreender e gerar linguagem humana com alta fidelidade." },
+  { term: "Landing Page", cat: "marketing", def: "Página web criada com objetivo único e específico — capturar leads, promover uma oferta ou converter visitantes em clientes." },
+  { term: "Machine Learning", cat: "ia", def: "Ramo da IA em que algoritmos aprendem padrões a partir de dados históricos para fazer previsões ou tomar decisões sem programação explícita." },
+  { term: "Microinteração", cat: "ux", def: "Pequenos momentos de design — animações, feedbacks visuais, transições — que tornam interfaces mais intuitivas e agradáveis de usar." },
+  { term: "MVP", cat: "dev", def: "Produto Mínimo Viável — versão com funcionalidades essenciais suficientes para validar hipóteses de produto com usuários reais." },
+  { term: "NPS", cat: "marketing", def: "Net Promoter Score — métrica que mede a lealdade do cliente perguntando a probabilidade de ele recomendar sua empresa a outros." },
+  { term: "Neural Network", cat: "ia", def: "Modelo computacional inspirado em neurônios biológicos, composto por camadas de nós interconectados que processam e aprendem com dados." },
+  { term: "OKR", cat: "marketing", def: "Objetivos e Resultados-Chave — framework de definição de metas que alinha equipes em torno de objetivos ambiciosos e mensuráveis." },
+  { term: "Omnichannel", cat: "marketing", def: "Estratégia que integra todos os canais de contato com o cliente — físicos e digitais — oferecendo experiência consistente e unificada." },
+  { term: "Persona", cat: "ux", def: "Representação semifictícia do cliente ideal, baseada em pesquisa real, usada para guiar decisões de produto, conteúdo e marketing." },
+  { term: "Pixel Perfect", cat: "design", def: "Prática de implementar designs com precisão absoluta em relação ao protótipo original, respeitando cada detalhe de espaçamento e tipografia." },
+  { term: "Prompt Engineering", cat: "ia", def: "Arte e ciência de construir instruções precisas para modelos de IA, maximizando a qualidade e relevância das respostas geradas." },
+  { term: "PWA", cat: "dev", def: "Progressive Web App — aplicação web que usa tecnologias modernas para oferecer experiência similar à de apps nativos, incluindo funcionamento offline." },
+  { term: "Responsividade", cat: "design", def: "Capacidade de um layout digital adaptar-se fluidamente a diferentes tamanhos de tela, proporcionando boa experiência em qualquer dispositivo." },
+  { term: "ROI", cat: "marketing", def: "Retorno sobre Investimento — indicador financeiro que calcula o lucro obtido em relação ao custo de uma ação ou campanha específica." },
+  { term: "REST API", cat: "dev", def: "Estilo de arquitetura para APIs web que usa verbos HTTP (GET, POST, PUT, DELETE) e recursos identificados por URLs para comunicação." },
+  { term: "SEO", cat: "marketing", def: "Otimização para Motores de Busca — conjunto de técnicas que melhoram a visibilidade orgânica de um site nas páginas de resultados." },
+  { term: "Sprint", cat: "dev", def: "Período fixo de tempo (geralmente 1-4 semanas) em Scrum durante o qual a equipe trabalha para entregar um incremento do produto." },
+  { term: "Storyboard", cat: "ux", def: "Sequência visual de ilustrações ou quadros que narram como um usuário interage com um produto ao longo de um cenário específico." },
+  { term: "Token", cat: "ia", def: "Unidade básica de texto que modelos de linguagem processam — pode ser uma palavra, parte de palavra ou caractere, dependendo da tokenização." },
+  { term: "TypeScript", cat: "dev", def: "Superset tipado do JavaScript que adiciona verificação estática de tipos, melhorando a manutenibilidade em projetos de grande escala." },
+  { term: "UI Design", cat: "design", def: "Design de Interface do Usuário — disciplina focada na aparência e apresentação visual dos elementos interativos de um produto digital." },
+  { term: "UX Writing", cat: "ux", def: "Prática de criar textos de interface — botões, mensagens de erro, onboarding — que guiam o usuário de forma clara e empática." },
+  { term: "Viewport", cat: "dev", def: "Área visível de uma página web na janela do navegador. O tamanho do viewport varia conforme o dispositivo e orienta layouts responsivos." },
+  { term: "Wireframe", cat: "ux", def: "Esboço estrutural de baixa fidelidade que representa o layout e hierarquia de uma interface antes de qualquer decisão visual detalhada." },
+  { term: "WebGL", cat: "dev", def: "API JavaScript que permite renderizar gráficos 2D e 3D interativos no navegador usando a GPU, sem necessidade de plugins externos." },
+  { term: "Zero-Shot Learning", cat: "ia", def: "Capacidade de um modelo de IA generalizar para tarefas ou categorias que nunca viu durante o treinamento, usando apenas descrições textuais." },
+];
+
+// ─── BUILD GLOSSARY ───
+let currentCat = 'all';
+
+function buildGlossary(terms) {
+  const section = document.getElementById('glossarySection');
+  const noResults = document.getElementById('noResults');
+  const groups = {};
+
+  terms.forEach(t => {
+    const letter = t.term[0].toUpperCase();
+    if (!groups[letter]) groups[letter] = [];
+    groups[letter].push(t);
+  });
+
+  // Remove old groups
+  section.querySelectorAll('.letter-group').forEach(el => el.remove());
+
+  const letters = Object.keys(groups).sort();
+
+  if (letters.length === 0) {
+    noResults.style.display = 'block';
+    return;
+  }
+  noResults.style.display = 'none';
+
+  letters.forEach(letter => {
+    const group = document.createElement('div');
+    group.className = 'letter-group';
+    group.innerHTML = `<div class="letter-heading">${letter}</div><div class="cards-grid"></div>`;
+    const grid = group.querySelector('.cards-grid');
+    groups[letter].forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.dataset.cat = item.cat;
+      card.innerHTML = `
+        <span class="card-category">${catLabel(item.cat)}</span>
+        <div class="card-term">${item.term}</div>
+        <p class="card-def">${item.def}</p>`;
+      grid.appendChild(card);
+    });
+    section.appendChild(group);
+  });
+}
+
+function catLabel(c) {
+  return {dev:'Desenvolvimento',design:'Design',marketing:'Marketing',ux:'UX/UI',ia:'IA'}[c] || c;
+}
+
+function filterAndRender() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  let filtered = glossary;
+  if (currentCat !== 'all') filtered = filtered.filter(t => t.cat === currentCat);
+  if (q) filtered = filtered.filter(t => t.term.toLowerCase().includes(q) || t.def.toLowerCase().includes(q));
+  buildGlossary(filtered);
+}
+
+function filterCat(btn, cat) {
+  currentCat = cat;
+  document.querySelectorAll('.filter-tag').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterAndRender();
+}
+
+document.getElementById('searchInput').addEventListener('input', filterAndRender);
+
+// ─── MODE TOGGLE ───
+function setMode(mode) {
+  document.body.dataset.mode = mode;
+  document.getElementById('btnSearch').classList.toggle('active', mode === 'search');
+  document.getElementById('btnAI').classList.toggle('active', mode === 'ai');
+  document.getElementById('searchInput').placeholder = mode === 'ai' ? 'Pergunte à IA...' : 'Pesquisar um termo...';
+  document.getElementById('glossarySection').style.display = mode === 'ai' ? 'none' : '';
+  if (mode === 'ai') typeGreeting();
+}
+
+// ─── AI GREETING ───
+const greetings = [
+  'Ei, Lindo. Tudo pronto para começar?',
+  'Olá! O que você quer aprender hoje?',
+  'Pronto para explorar o universo digital?',
+];
+let greetIdx = 0;
+
+function typeGreeting() {
+  const el = document.getElementById('aiGreeting');
+  const text = greetings[greetIdx % greetings.length];
+  greetIdx++;
+  el.innerHTML = '';
+  let i = 0;
+  const cursor = '<span class="cursor-blink"></span>';
+  const interval = setInterval(() => {
+    el.innerHTML = text.slice(0, i) + cursor;
+    i++;
+    if (i > text.length) clearInterval(interval);
+  }, 45);
+}
+
+// ─── AI CHAT ───
+const aiResponses = {
+  default: (q) => `Boa pergunta sobre "${q}"! No universo do desenvolvimento e design, esse conceito é fundamental. Posso aprofundar qualquer aspecto — basta especificar o que mais te interessa.`,
+  api: 'Uma API (Interface de Programação de Aplicações) é como um garçom num restaurante: você faz o pedido (requisição), ele vai à cozinha (servidor) e traz sua comida (resposta). Define um contrato claro de comunicação entre sistemas.',
+  css: 'CSS é a linguagem de estilo da web. Com Flexbox e Grid, você controla layout de forma poderosa. Variables CSS (`--cor-primaria`) permitem criar sistemas de design escaláveis e temas dinâmicos.',
+  ux: 'UX (Experiência do Usuário) é sobre como as pessoas se sentem ao usar um produto. A regra de ouro: remova fricção. Cada clique desnecessário é uma oportunidade perdida de encantamento.',
+  ia: 'Inteligência Artificial moderna baseia-se em modelos treinados com bilhões de parâmetros. LLMs como eu processam texto como sequências de tokens e preveem o próximo token com base em padrões aprendidos.',
+  seo: 'SEO é um jogo de longo prazo. Core Web Vitals, conteúdo semântico e backlinks de qualidade são os pilares. Pense em responder perguntas reais do usuário melhor do que qualquer outro.',
+};
+
+function getAIResponse(q) {
+  const lower = q.toLowerCase();
+  if (lower.includes('api')) return aiResponses.api;
+  if (lower.includes('css') || lower.includes('flexbox') || lower.includes('grid')) return aiResponses.css;
+  if (lower.includes('ux') || lower.includes('experiência') || lower.includes('usuario')) return aiResponses.ux;
+  if (lower.includes('ia') || lower.includes('inteligência') || lower.includes('llm') || lower.includes('ai')) return aiResponses.ia;
+  if (lower.includes('seo') || lower.includes('busca') || lower.includes('google')) return aiResponses.seo;
+  return aiResponses.default(q);
+}
+
+function addMsg(text, isUser) {
+  const container = document.getElementById('aiMessages');
+  const msg = document.createElement('div');
+  msg.className = 'ai-msg';
+  if (isUser) {
+    msg.innerHTML = `<div class="ai-bubble user-bubble" style="margin-left:auto">${text}</div><div class="ai-avatar user">EU</div>`;
+  } else {
+    msg.innerHTML = `<div class="ai-avatar bot">✦</div><div class="ai-bubble" id="typing-${Date.now()}"></div>`;
+  }
+  container.appendChild(msg);
+  container.scrollTop = container.scrollHeight;
+  return msg.querySelector('.ai-bubble:not(.user-bubble)');
+}
+
+function sendAI() {
+  const input = document.getElementById('aiInput');
+  const q = input.value.trim();
+  if (!q) return;
+  input.value = '';
+  addMsg(q, true);
+  const bubble = addMsg('', false);
+  const response = getAIResponse(q);
+  let i = 0;
+  const interval = setInterval(() => {
+    bubble.textContent = response.slice(0, i) + (i < response.length ? '▌' : '');
+    i++;
+    if (i > response.length) {
+      bubble.textContent = response;
+      clearInterval(interval);
+    }
+    document.getElementById('aiMessages').scrollTop = document.getElementById('aiMessages').scrollHeight;
+  }, 18);
+}
+
+// ─── HAMBURGER ───
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+
+// ─── INIT ───
+buildGlossary(glossary);
+</script>
+</body>
+</html>
